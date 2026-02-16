@@ -3,9 +3,10 @@ package jwt
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // JWT handles JWT token creation, validation, and cookie management.
@@ -23,15 +24,20 @@ func NewJWT(jwtCfg *Config) *JWT {
 	}
 }
 
-// GenerateToken creates a signed JWT token containing the user's email and expiration.
-func (j *JWT) GenerateToken(email string) (string, error) {
+// GenerateTokenWithClaim creates a signed JWT token containing a single string claim and expiration.
+func (j *JWT) GenerateTokenWithClaim(claimKey, claimValue string) (string, error) {
 	claims := jwt.MapClaims{
-		Email: email,
-		Exp:   time.Now().Add(j.TokenTTL).Unix(),
+		claimKey: claimValue,
+		Exp:      time.Now().Add(j.TokenTTL).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(j.Secret))
+	signedToken, err := token.SignedString([]byte(j.Secret))
+	if err != nil {
+		return "", err
+	}
+
+	return signedToken, nil
 }
 
 // SetCookie sets an HTTP-only, secure cookie with the JWT token on the response writer.
@@ -43,7 +49,8 @@ func (j *JWT) SetCookie(w http.ResponseWriter, token string, secure bool, domain
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   secure,
-		Expires:  time.Now().Add(j.TokenTTL),
+		MaxAge:   int(j.TokenTTL.Seconds()),
+		Expires:  time.Now().Add(j.TokenTTL), // set Expires for compatibility
 	}
 
 	if secure {
@@ -67,8 +74,8 @@ func (j *JWT) RemoveCookie(w http.ResponseWriter, secure bool, domain ...string)
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   secure,
-		Expires:  time.Unix(0, 0),
 		MaxAge:   -1,
+		Expires:  time.Unix(0, 0),
 	}
 
 	if secure {
@@ -84,41 +91,73 @@ func (j *JWT) RemoveCookie(w http.ResponseWriter, secure bool, domain ...string)
 	http.SetCookie(w, cookie)
 }
 
-// Extracts HTTP Cookie from request based on cookie name.
+// GetCookie extracts HTTP Cookie from request based on cookie name.
 func (j *JWT) GetCookie(r *http.Request) (*http.Cookie, error) {
 	return r.Cookie(j.CookieName)
 }
 
-// ValidateJWT parses and validates the JWT token string.
-// Returns the email claim if valid, or an error otherwise.
-func (j *JWT) ValidateJWT(tokenString string) (string, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header[Alg])
+// helper to extract "exp" claim as int64 (unix seconds). Accepts common types.
+func expFromClaims(claims jwt.MapClaims) (int64, error) {
+	raw, ok := claims[Exp]
+	if !ok {
+		return 0, fmt.Errorf("missing exp claim")
+	}
+
+	switch v := raw.(type) {
+	case float64:
+		return int64(v), nil
+	case int64:
+		return v, nil
+	case int:
+		return int64(v), nil
+	case string:
+		// sometimes exp may be serialized as string
+		i, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			return 0, fmt.Errorf("invalid exp claim string: %w", err)
+		}
+		return i, nil
+	default:
+		return 0, fmt.Errorf("unsupported exp claim type: %T", raw)
+	}
+}
+
+// generic validator that extracts a string claim (claimKey) from the token.
+// returns the claim string (e.g. email or lang) or an error.
+func (j *JWT) ValidateClaim(tokenString, claimKey string) (string, error) {
+	if tokenString == "" {
+		return "", fmt.Errorf("empty token")
+	}
+
+	token, err := jwt.ParseWithClaims(tokenString, jwt.MapClaims{}, func(t *jwt.Token) (interface{}, error) {
+		// prefer explicit alg check
+		if t.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header[Alg])
 		}
 		return []byte(j.Secret), nil
-	})
+	}, jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}))
+	if err != nil {
+		return "", fmt.Errorf("parse token: %w", err)
+	}
 
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return "", fmt.Errorf("invalid token claims")
+	}
+
+	exp, err := expFromClaims(claims)
 	if err != nil {
 		return "", err
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		exp, ok := claims[Exp].(float64)
-		if !ok {
-			return "", fmt.Errorf("missing exp claim")
-		}
-		if time.Now().Unix() > int64(exp) {
-			return "", fmt.Errorf("token has expired")
-		}
-
-		email, ok := claims[Email].(string)
-		if !ok || email == "" {
-			return "", fmt.Errorf("email claim missing or invalid")
-		}
-
-		return email, nil
+	if time.Now().Unix() > exp+5 {
+		return "", fmt.Errorf("token has expired")
 	}
 
-	return "", fmt.Errorf("invalid token claims")
+	val, ok := claims[claimKey].(string)
+	if !ok || val == "" {
+		return "", fmt.Errorf("%s claim missing or invalid", claimKey)
+	}
+
+	return val, nil
 }

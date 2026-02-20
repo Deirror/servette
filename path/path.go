@@ -10,14 +10,14 @@ import (
 
 // GetProjectRoot returns the project root directory.
 // It first checks the prefix + APP_MODE env variable. If not set,
-// it falls back to searching for go.mod in parent directories.
+// It falls back to searching for go.mod in parent directories.
 // In prod, the env vars are already loaded, meanwhile in dev mode they must be loaded from a file.
-func GetProjectRoot(envVar string) (string, error) {
-	if mode, _ := env.Get(envVar); mode == env.Prod {
+func GetProjectRootFromAppMode(appPrefix string) (string, error) {
+	if mode, _ := env.Get(appPrefix + "_APP_MODE"); mode == env.Prod {
 		return "", nil
 	}
 
-	// fallback to searching for go.mod
+	// Fallback to searching for go.mod.
 	root, err := FindProjectRoot("go.mod")
 	if err != nil {
 		return "", err

@@ -6,13 +6,13 @@ import (
 
 // Wrapper struct, containing all needed data for translation.
 type Translator struct {
-	Bundles  *Bundle
+	Bundle  *Bundle
 	Resolver *languages.Resolver
 }
 
 func New(b *Bundle, r *languages.Resolver) *Translator {
 	return &Translator{
-		Bundles:  b,
+		Bundle:  b,
 		Resolver: r,
 	}
 }

@@ -13,19 +13,30 @@ type Err struct {
 }
 
 // New constructs a new Err with both client-facing key and internal message.
-func New(code, msgKey string, internalMsg ...string) *Err {
-	if len(internalMsg) > 1 {
-		panic("only one internal message allowed")
-	}
-
+func NewWithMsgKey(code, msgKey string, internalMsg ...string) *Err {
 	msg := ""
-	if len(internalMsg) == 1 {
+	if len(internalMsg) > 1 {
 		msg = internalMsg[0]
 	}
 
 	return &Err{
 		Code:        code,
 		MsgKey:      msgKey,
+		InternalMsg: msg,
+	}
+}
+
+// New constructs a new Err with internal message key and without a i18n message for the client.
+// Used in Frontend APIs, since the i18n message key is already displayed in the html template.
+func New(code string, internalMsg ...string) *Err {
+	msg := ""
+	if len(internalMsg) > 1 {
+		msg = internalMsg[0]
+	}
+
+	return &Err{
+		Code:        code,
+		MsgKey:      "",
 		InternalMsg: msg,
 	}
 }

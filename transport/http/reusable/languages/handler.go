@@ -15,12 +15,12 @@ import (
 type Handler struct {
 	rlv *languages.Resolver
 
-	jwt *jwt.JWT
+	jwt jwt.Provider
 
 	cfg *appx.Config
 }
 
-func NewHandler(cfg *appx.Config, r *languages.Resolver, jwt *jwt.JWT) *Handler {
+func NewHandler(cfg *appx.Config, r *languages.Resolver, jwt jwt.Provider) *Handler {
 	return &Handler{
 		cfg: cfg,
 		rlv: r,

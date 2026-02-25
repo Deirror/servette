@@ -15,6 +15,12 @@ func NewConfig(url, apiKey, bucket string) *Config {
 	}
 }
 
+// WithProjectURL sets the ProjectURL and returns the updated Config.
+func (c *Config) WithProjectURL(url string) *Config {
+	c.ProjectURL = url
+	return c
+}
+
 // WithAPIKey sets the APIKey and returns the updated Config.
 func (c *Config) WithAPIKey(apiKey string) *Config {
 	c.APIKey = apiKey

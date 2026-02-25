@@ -3,10 +3,11 @@ package jwt
 import (
 	"github.com/Deirror/servette/auth/jwt"
 	envcfg "github.com/Deirror/servette/config/env"
+	"github.com/Deirror/servette/config"
 	"github.com/Deirror/servette/env"
 )
 
-type MultiConfig = envcfg.MultiConfig[jwt.Config]
+type MultiConfig = config.MultiConfig[jwt.Config]
 
 var suffixes = []string{"JWT_SECRET", "JWT_COOKIE_NAME", "JWT_TOKEN_TTL"}
 

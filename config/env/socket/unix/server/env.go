@@ -2,11 +2,12 @@ package server
 
 import (
 	envcfg "github.com/Deirror/servette/config/env"
+	"github.com/Deirror/servette/config"
 	"github.com/Deirror/servette/env"
 	"github.com/Deirror/servette/transport/socket/unix/server"
 )
 
-type MultiConfig = envcfg.MultiConfig[server.Config]
+type MultiConfig = config.MultiConfig[server.Config]
 
 var suffixes = []string{
 	"UNIX_SOCKET_SERVER_PORT",

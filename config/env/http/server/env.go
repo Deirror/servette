@@ -2,11 +2,12 @@ package server
 
 import (
 	envcfg "github.com/Deirror/servette/config/env"
+	"github.com/Deirror/servette/config"
 	"github.com/Deirror/servette/env"
 	"github.com/Deirror/servette/transport/http/server"
 )
 
-type MultiConfig = envcfg.MultiConfig[server.Config]
+type MultiConfig = config.MultiConfig[server.Config]
 
 var suffixes = []string{
 	"HTTP_SERVER_PORT",

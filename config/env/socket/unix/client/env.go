@@ -1,12 +1,13 @@
 package client
 
 import (
+	"github.com/Deirror/servette/config"
 	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/env"
 	"github.com/Deirror/servette/transport/socket/unix/client"
 )
 
-type MultiConfig = envcfg.MultiConfig[client.Config]
+type MultiConfig = config.MultiConfig[client.Config]
 
 var suffixes = []string{
 	"UNIX_SOCKET_CLIENT_PORT",

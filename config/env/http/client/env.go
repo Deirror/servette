@@ -2,11 +2,12 @@ package client
 
 import (
 	envcfg "github.com/Deirror/servette/config/env"
+	"github.com/Deirror/servette/config"
 	"github.com/Deirror/servette/env"
 	"github.com/Deirror/servette/transport/http/client"
 )
 
-type MultiConfig = envcfg.MultiConfig[client.Config]
+type MultiConfig = config.MultiConfig[client.Config]
 
 var suffixes = []string{
 	"HTTP_CLIENT_READ_TIMEOUT",

@@ -2,11 +2,12 @@ package blob
 
 import (
 	envcfg "github.com/Deirror/servette/config/env"
+	"github.com/Deirror/servette/config"
 	"github.com/Deirror/servette/domain/blob"
 	"github.com/Deirror/servette/env"
 )
 
-type MultiConfig = envcfg.MultiConfig[blob.Config]
+type MultiConfig = config.MultiConfig[blob.Config]
 
 var suffixes = []string{"BLOB_PROJECT_URL", "BLOB_API_KEY", "BLOB_BUCKET"}
 

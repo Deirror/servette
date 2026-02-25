@@ -9,6 +9,14 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type Provider interface {
+	GenerateToken(email string) (string, error)
+	SetCookie(w http.ResponseWriter, token string, secure bool, domains ...string)
+	RemoveCookie(w http.ResponseWriter, secure bool, domains ...string)
+	ValidateJWT(token string) (string, error)
+	GetCookie(r *http.Request) (*http.Cookie, error)
+}
+
 // JWT handles JWT token creation, validation, and cookie management.
 type JWT struct {
 	CookieName string        // Name of the cookie to store the JWT

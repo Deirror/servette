@@ -15,8 +15,8 @@ func New(cfg *Config) *http.Client {
 			return net.DialTimeout("unix", cfg.SocketPath, cfg.IdleTimeout)
 		},
 		IdleConnTimeout:       cfg.IdleTimeout,
-		TLSHandshakeTimeout:   5 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
+		TLSHandshakeTimeout:   5 * time.Second, // default value
+		ExpectContinueTimeout: 1 * time.Second, // default value
 	}
 
 	return &http.Client{

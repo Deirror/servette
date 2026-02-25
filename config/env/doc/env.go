@@ -1,15 +1,17 @@
 package doc
 
 import (
-	"github.com/Deirror/servette/env"
+	"github.com/Deirror/servette/config"
 	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/domain/doc"
+	"github.com/Deirror/servette/env"
 )
 
-type MultiConfig = envcfg.MultiConfig[doc.Config]
+type MultiConfig = config.MultiConfig[doc.Config]
 
 var suffixes = []string{
 	"DOC_STORE_URL",
+	"DOC_DATABASE",
 }
 
 // LoadConfig loads the document store configuration from environment variables,
@@ -22,7 +24,12 @@ func LoadConfig(prefix ...string) (*doc.Config, error) {
 		return nil, err
 	}
 
-	return doc.NewConfig(url), nil
+	db, err := env.Get(pfx + suffixes[1])
+	if err != nil {
+		return nil, err
+	}
+
+	return doc.NewConfig(url, db), nil
 }
 
 // LoadMultiConfig loads multiple Config instances by scanning env vars with suffixes.

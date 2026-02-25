@@ -5,10 +5,11 @@ import (
 
 	"github.com/Deirror/servette/env"
 	envcfg "github.com/Deirror/servette/config/env"
+	"github.com/Deirror/servette/config"
 	"github.com/Deirror/servette/domain/db"
 )
 
-type MultiConfig = envcfg.MultiConfig[db.Config]
+type MultiConfig = config.MultiConfig[db.Config]
 
 var suffixes = []string{
 	"DB_DRIVER",

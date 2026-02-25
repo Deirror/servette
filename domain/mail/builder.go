@@ -2,16 +2,16 @@ package mail
 
 import "fmt"
 
-// EmailBuild constructs HTML email bodies for verification and notification emails.
+// Builder constructs HTML email bodies for verification and notification emails.
 // It holds the base domain used for building verification links.
-type EmailBuild struct {
+type Builder struct {
 	domain string
 }
 
-// NewEmailBuild creates a new EmailBuild with the given domain as the base URL.
+// NewBuilder creates a new Builder with the given domain as the base URL.
 // The domain should include scheme (e.g., https://example.com) and optionally a trailing slash.
-func NewEmailBuild(domain string) *EmailBuild {
-	return &EmailBuild{
+func NewBuilder(domain string) *Builder {
+	return &Builder{
 		domain: domain,
 	}
 }
@@ -19,7 +19,7 @@ func NewEmailBuild(domain string) *EmailBuild {
 // VerificationEmail returns an HTML email body for verifying a user's email address after registration.
 // 'callback' is the verification endpoint path appended to the domain.
 // 'code' is the unique verification code appended as a query parameter.
-func (b *EmailBuild) VerificationEmail(callback, code string) string {
+func (b *Builder) VerificationEmail(callback, code string) string {
 	verifyLink := fmt.Sprintf("%s%s?code=%s", b.domain, callback, code)
 
 	return fmt.Sprintf(`
@@ -50,7 +50,7 @@ func (b *EmailBuild) VerificationEmail(callback, code string) string {
 // VerificationChangeEmail returns an HTML email body for verifying a user's new email address after an email change.
 // 'callback' is the verification endpoint path appended to the domain.
 // 'code' is the unique verification code appended as a query parameter.
-func (b *EmailBuild) VerificationChangeEmail(callback, code string) string {
+func (b *Builder) VerificationChangeEmail(callback, code string) string {
 	verifyLink := fmt.Sprintf("%s%s?code=%s", b.domain, callback, code)
 
 	return fmt.Sprintf(`
@@ -82,7 +82,7 @@ func (b *EmailBuild) VerificationChangeEmail(callback, code string) string {
 // that their account email was changed.
 // 'sysName' is the name of the system or application.
 // 'support' is the support email address to contact if the change was unauthorized.
-func (b *EmailBuild) NotifyOldEmail(sysName, support string) string {
+func (b *Builder) NotifyOldEmail(sysName, support string) string {
 	return fmt.Sprintf(`
 	<!DOCTYPE html>
 	<html>
@@ -107,7 +107,7 @@ func (b *EmailBuild) NotifyOldEmail(sysName, support string) string {
 
 // VerificationDeleteAccount returns an HTML email body for verifying a user's account deletion request.
 // 'sysName' is the system name, 'support' is the support email, 'callback' is the endpoint path, and 'code' is the unique verification code.
-func (b *EmailBuild) VerificationDeleteAccount(sysName, support, callback, code string) string {
+func (b *Builder) VerificationDeleteAccount(sysName, support, callback, code string) string {
 	verifyLink := fmt.Sprintf("%s%s?code=%s", b.domain, callback, code)
 
 	return fmt.Sprintf(`
@@ -141,7 +141,7 @@ func (b *EmailBuild) VerificationDeleteAccount(sysName, support, callback, code 
 
 // NotifyAccountDeleted returns an HTML email body notifying the user that their account has been deleted.
 // 'sysName' is the system name, 'support' is the support email for reporting unauthorized deletion.
-func (b *EmailBuild) NotifyAccountDeleted(sysName, support string) string {
+func (b *Builder) NotifyAccountDeleted(sysName, support string) string {
 	return fmt.Sprintf(`
 	<!DOCTYPE html>
 	<html>

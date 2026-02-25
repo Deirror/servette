@@ -3,10 +3,11 @@ package app
 import (
 	"github.com/Deirror/servette/app"
 	envcfg "github.com/Deirror/servette/config/env"
+	config "github.com/Deirror/servette/config"
 	"github.com/Deirror/servette/env"
 )
 
-type MultiConfig = envcfg.MultiConfig[appx.Config]
+type MultiConfig = config.MultiConfig[appx.Config]
 
 var suffixes = []string{"APP_MODE", "APP_DOMAIN"}
 

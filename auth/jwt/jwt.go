@@ -5,9 +5,9 @@ import (
 )
 
 type Provider interface {
-	GenerateToken(email string) (string, error)
-	SetCookie(w http.ResponseWriter, token string, secure bool, domains ...string)
-	RemoveCookie(w http.ResponseWriter, secure bool, domains ...string)
-	ValidateJWT(token string) (string, error)
+	GenerateTokenWithClaim(claimKey, claimValue string) (string, error)
+	SetCookie(w http.ResponseWriter, token string, secure bool, domain ...string)
+	RemoveCookie(w http.ResponseWriter, secure bool, domain ...string)
 	GetCookie(r *http.Request) (*http.Cookie, error)
+	ValidateClaim(tokenString, claimKey string) (string, error)
 }

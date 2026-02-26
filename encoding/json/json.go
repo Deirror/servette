@@ -31,3 +31,21 @@ func Decode[T any](r io.Reader) (T, error) {
 	err := json.NewDecoder(r).Decode(&v)
 	return v, err
 }
+
+// Marshal returns JSON bytes from a Go value
+func Marshal(v any) ([]byte, error) {
+	return json.Marshal(v)
+}
+
+// Unmarshal reads JSON bytes into a target
+func Unmarshal[T any](data []byte) (T, error) {
+	var v T
+	err := json.Unmarshal(data, &v)
+	return v, err
+}
+
+// BodyToJSON reads an HTTP response body into a typed struct
+func BodyToJSON[T any](resp *http.Response) (T, error) {
+	defer resp.Body.Close()
+	return Decode[T](resp.Body)
+}

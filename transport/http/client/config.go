@@ -6,17 +6,25 @@ import (
 
 // Config contains configuration settings for a HTTP client.
 type Config struct {
+	BaseURL      string        // Main url and schema for all requests
 	ReadTimeout  time.Duration // Maximum duration for reading the entire request
 	WriteTimeout time.Duration // Maximum duration before timing out writes
 	IdleTimeout  time.Duration // Maximum time to wait for the next request
 }
 
-func NewConfig(read, write, idle time.Duration) *Config {
+func NewConfig(url string, read, write, idle time.Duration) *Config {
 	return &Config{
+		BaseURL: url,
 		ReadTimeout:  read,
 		WriteTimeout: write,
 		IdleTimeout:  idle,
 	}
+}
+
+// WithBaseURL sets the BaseURL field and returns the updated Config.
+func (c *Config) WithBaseURL(url string) *Config {
+	c.BaseURL = url
+	return c
 }
 
 // WithReadTimeout sets the ReadTimeout field and returns the updated Config.

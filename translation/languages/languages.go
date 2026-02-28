@@ -21,7 +21,20 @@ func NewResolver(defaultLang string, supported ...string) *Resolver {
 	}
 }
 
-func (rlv *Resolver) LangFromRequest(r *http.Request) string {
+func (rlv *Resolver) FromRequest(r *http.Request, t RequestType) string {
+	lang := rlv.DefaultLang
+
+	switch t {
+	case FromCookie:
+		lang = rlv.FromRequestCookie(r)
+	case FromURL:
+		lang = rlv.FromRequestURL(r)
+	}
+
+	return lang
+}
+
+func (rlv *Resolver) FromRequestURL(r *http.Request) string {
 	lang := r.URL.Query().Get(LangKey)
 
 	if !rlv.IsSupported(lang) {
@@ -31,7 +44,7 @@ func (rlv *Resolver) LangFromRequest(r *http.Request) string {
 	return lang
 }
 
-func (rlv *Resolver) ContextWithLang(r *http.Request) context.Context {
+func (rlv *Resolver) FromRequestCookie(r *http.Request) string {
 	lang := rlv.DefaultLang
 
 	if cookie, err := r.Cookie(LangKey); err == nil {
@@ -40,10 +53,10 @@ func (rlv *Resolver) ContextWithLang(r *http.Request) context.Context {
 		}
 	}
 
-	return context.WithValue(r.Context(), LangKey, lang)
+	return lang
 }
 
-func (r *Resolver) LangFromContext(ctx context.Context) string {
+func (r *Resolver) FromContext(ctx context.Context) string {
 	val := ctx.Value(LangKey)
 	if lang, ok := val.(string); ok && r.IsSupported(lang) {
 		return lang

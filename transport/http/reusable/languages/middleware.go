@@ -2,6 +2,7 @@ package languages
 
 import (
 	"net/http"
+	"context"
 
 	"github.com/Deirror/servette/translation/languages"
 )
@@ -16,9 +17,10 @@ func NewMiddleware(r *languages.Resolver) *Middleware {
 	}
 }
 
-func (m *Middleware) LanguageMiddleware(next http.Handler) http.HandlerFunc {
+func (m *Middleware) LanguageMiddleware(next http.Handler, reqType languages.RequestType) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := m.rlv.ContextWithLang(r)
+		lang := m.rlv.FromRequest(r, reqType)
+		ctx := context.WithValue(r.Context(), languages.LangKey, lang)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

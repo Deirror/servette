@@ -29,7 +29,7 @@ func NewHandler(cfg *appx.Config, r *languages.Resolver, jwt jwt.Provider) *Hand
 }
 
 func (h *Handler) HandleSetLanguage(ctx context.Context, w http.ResponseWriter, r *http.Request) *errx.Err {
-	lang := h.rlv.LangFromRequest(r)
+	lang := h.rlv.FromRequestURL(r)
 
 	h.jwt.SetCookie(w, lang, appx.IsProdMode(h.cfg.Mode))
 

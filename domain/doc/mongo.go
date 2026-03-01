@@ -75,6 +75,29 @@ func (m *MongoStoreClient) Find(ctx context.Context, coll string, filter interfa
 	}
 }
 
+func (m *MongoStoreClient) FindWithOpts(
+	ctx context.Context,
+	coll string,
+	filter interface{},
+	results interface{},
+	o *FindOptions,
+) error {
+
+	c := m.db.Collection(coll)
+
+	opts := options.Find().
+		SetSkip(o.Skip).
+		SetLimit(o.Limit)
+
+	cur, err := c.Find(ctx, filter, opts)
+	if err != nil {
+		return err
+	}
+	defer cur.Close(ctx)
+
+	return cur.All(ctx, results)
+}
+
 func (m *MongoStoreClient) Update(ctx context.Context, coll string, filter interface{}, update interface{}) (int64, error) {
 	c := m.db.Collection(coll)
 

@@ -1,7 +1,10 @@
 package transport
 
 const (
-	JSONFail      = "json.fail"
-	TransportFail = "transport.fail"
-	URLNotFound = "url.not_found"
+	JSONFailKey      = "json.fail"
+	TransportFailKey = "transport.fail"
+
+	TemplFailKey = "templ.fail"
+
+	URLNotFoundKey = "url.not_found"
 )

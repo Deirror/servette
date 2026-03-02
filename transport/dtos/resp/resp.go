@@ -6,14 +6,7 @@ type Resp struct {
 	Payload any    `json:"payload,omitempty"`
 }
 
-func New(code, key string) *Resp {
-	return &Resp{
-		Code:   code,
-		MsgKey: key,
-	}
-}
-
-func NewWithPayload(code, key string, payload any) *Resp {
+func New(code, key string, payload any) *Resp {
 	return &Resp{
 		Code:    code,
 		MsgKey:  key,

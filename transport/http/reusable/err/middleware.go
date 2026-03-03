@@ -13,6 +13,7 @@ import (
 	"github.com/Deirror/servette/transport"
 	"github.com/Deirror/servette/transport/dtos/resp"
 	"github.com/Deirror/servette/transport/err"
+	httpresp "github.com/Deirror/servette/transport/http/dtos/resp"
 	"github.com/Deirror/servette/transport/http/htmx"
 )
 
@@ -43,7 +44,7 @@ func (m *Middleware) ErrMiddleware(ctx context.Context, w http.ResponseWriter, r
 	if err.MsgKey == transport.TemplFailKey {
 		// render generic err indicator
 		if htmx.IsHXRequest(r) {
-		
+
 		} else {
 
 		}
@@ -58,5 +59,12 @@ func (m *Middleware) ErrMiddleware(ctx context.Context, w http.ResponseWriter, r
 	resp := respx.New(err.Code, err.MsgKey, nil)
 	if e = json.Write(w, status, &resp); e != nil {
 		logger.LogFunc(ctx, m.log, "ErrMiddleware", fmt.Errorf("cannot write json: %v", e))
+	}
+}
+
+func (m *Middleware) NotFoundMiddleware(w http.ResponseWriter, r *http.Request) {
+	resp := httpresp.New(http.StatusNotFound, transport.URLNotFoundKey, nil)
+	if err := json.Write(w, http.StatusNotFound, &resp); err != nil {
+		logger.LogFunc(context.Background(), m.log, "NotFoundMiddleware", fmt.Errorf("cannot write json: %v", err))
 	}
 }

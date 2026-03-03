@@ -1,13 +1,42 @@
 package transport
 
-import "io"
+import (
+	"context"
+	"net"
+	"time"
+)
 
-// Transport defines the minimal interface to send a request and get a response.
-type Transport interface {
-	// Send sends data to the given path and returns the response body as a reader.
-	// ContentType is optional (e.g., "application/json")
-	Send(path string, contentType string, body io.Reader) (io.ReadCloser, error)
+type DialContextFunc = func(ctx context.Context, _, addr string) (net.Conn, error)
 
-	// Get sends a GET request to the path and returns the response body.
-	Get(path string) (io.ReadCloser, error)
+func NewDialContext(network, addr string, dialTimeout time.Duration) DialContextFunc {
+	return func(ctx context.Context, _, _ string) (net.Conn, error) {
+		d := net.Dialer{
+			Timeout:   dialTimeout,
+			KeepAlive: 30 * time.Second, // default
+		}
+		return d.DialContext(ctx, network, addr)
+	}
+}
+
+func NetworkFromTransType(t TransportType) string {
+	switch t {
+	case TCPKey:
+		return "tcp"
+	case UDSKey:
+		return "unix"
+	default:
+		return "tcp" // default fallback
+	}
+}
+
+func EndpointFromTransType(endpoint string, t TransportType) string {
+	switch t {
+	case TCPKey:
+		return endpoint
+	case UDSKey:
+		return "http://unix"
+	default:
+		return endpoint // default fallback
+	}
+
 }

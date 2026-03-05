@@ -14,7 +14,7 @@ type MultiConfig = config.MultiConfig[server.Config]
 
 var suffixes = []string{
 	"HTTP_SERVER_TRANSPORT_TYPE",
-	"HTTP_SERVER_ADDR",
+	"HTTP_SERVER_ENDPOINT",
 	"HTTP_SERVER_READ_TIMEOUT",
 	"HTTP_SERVER_WRITE_TIMEOUT",
 	"HTTP_SERVER_IDLE_TIMEOUT",
@@ -35,7 +35,7 @@ func LoadConfig(prefix ...string) (*server.Config, error) {
 		return nil, errors.New("transport type is unknown")
 	}
 
-	addr, err := env.Get(pfx + suffixes[1])
+	endpoint, err := env.Get(pfx + suffixes[1])
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func LoadConfig(prefix ...string) (*server.Config, error) {
 
 	return &server.Config{
 		TransType:         transType,
-		Addr:              addr,
+		Endpoint:          endpoint,
 		ReadTimeout:       readTimeout,
 		WriteTimeout:      writeTimeout,
 		IdleTimeout:       idleTimeout,

@@ -12,8 +12,8 @@ type Config struct {
 	// Transport type: TCP or Unix
 	TransType transport.TransportType
 
-	// Address for TCP (host:port) or base URL for Unix ("http://unix"), but can be used also for socket filepaths
-	Addr string
+	// Endpoint for TCP (host:port) or base URL for Unix ("http://unix"), but can be used also for socket filepaths
+	Endpoint string
 
 	// Timeouts
 	ReadTimeout       time.Duration // max time to read request headers + body
@@ -22,7 +22,7 @@ type Config struct {
 	ReadHeaderTimeout time.Duration // time to read request headers
 
 	// TLS
-	TLSConfig *tls.Config 
+	TLSConfig *tls.Config
 
 	MaxHeaderBytes int
 }
@@ -30,20 +30,20 @@ type Config struct {
 func DefaultConfigx() *Config {
 	return &Config{
 		TransType:         transport.TCPKey,
-		Addr:              "",
+		Endpoint:          "",
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      10 * time.Second,
 		IdleTimeout:       90 * time.Second,
-		ReadHeaderTimeout: 10 * time.Second, 
+		ReadHeaderTimeout: 10 * time.Second,
 		TLSConfig:         nil,
 		MaxHeaderBytes:    1 << 20, // 1 MB, reasonable default
 	}
 }
 
-func NewConfigWithTimeouts(addr string, readTimeout, writeTimeout, readHeaderTimeout, idleTimeout time.Duration) *Config {
+func NewConfigWithTimeouts(endpoint string, readTimeout, writeTimeout, readHeaderTimeout, idleTimeout time.Duration) *Config {
 	c := DefaultConfigx()
-	if addr != "" {
-		c.Addr = addr
+	if endpoint != "" {
+		c.Endpoint = endpoint
 	}
 	if readTimeout != 0 {
 		c.ReadTimeout = readTimeout
@@ -65,8 +65,8 @@ func (c *Config) WithTransType(t transport.TransportType) *Config {
 	return c
 }
 
-func (c *Config) WithAddr(addr string) *Config {
-	c.Addr = addr
+func (c *Config) withendpoint(endpoint string) *Config {
+	c.Endpoint = endpoint
 	return c
 }
 

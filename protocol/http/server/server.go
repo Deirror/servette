@@ -17,7 +17,7 @@ type Server struct {
 	srv       *http.Server
 	listener  net.Listener
 	transType string
-	addr      string
+	endpoint
 }
 
 func New(cfg *Config, logger *slog.Logger, h http.Handler) (*Server, error) {

@@ -17,7 +17,7 @@ type Server struct {
 	srv       *http.Server
 	listener  net.Listener
 	transType string
-	endpoint
+	endpoint string
 }
 
 func New(cfg *Config, logger *slog.Logger, h http.Handler) (*Server, error) {
@@ -31,14 +31,14 @@ func New(cfg *Config, logger *slog.Logger, h http.Handler) (*Server, error) {
 		srv:       srv,
 		listener:  ln,
 		transType: cfg.TransType,
-		addr:      cfg.Addr,
+		endpoint:      cfg.Endpoint,
 	}, nil
 }
 
 func (s *Server) Start(ctx context.Context) error {
 	s.log.Info("HTTP Server starting",
 		slog.String("transport", s.transType),
-		slog.String("addr", s.addr),
+		slog.String("endpoint", s.endpoint),
 	)
 
 	// Serve TLS if configured
@@ -56,7 +56,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 
 	// Cleanup UNIX socket file
 	if s.transType == "unix" {
-		_ = os.Remove(s.addr)
+		_ = os.Remove(s.endpoint)
 	}
 
 	return err
@@ -68,23 +68,23 @@ func NewHTTPServer(cfg *Config, handler http.Handler) (*http.Server, net.Listene
 
 	if network == "unix" {
 		// Remove old socket file if exists
-		if _, err := os.Stat(cfg.Addr); err == nil {
-			if err := os.Remove(cfg.Addr); err != nil {
+		if _, err := os.Stat(cfg.Endpoint); err == nil {
+			if err := os.Remove(cfg.Endpoint); err != nil {
 				return nil, nil, err
 			}
 		}
 
 	}
 
-	listener, err := net.Listen(network, cfg.Addr)
+	listener, err := net.Listen(network, cfg.Endpoint)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	if network == "unix" {
-		if err := os.Chmod(cfg.Addr, 0660); err != nil {
+		if err := os.Chmod(cfg.Endpoint, 0660); err != nil {
 			listener.Close()
-			os.Remove(cfg.Addr)
+			os.Remove(cfg.Endpoint)
 			return nil, nil, err
 		}
 	}

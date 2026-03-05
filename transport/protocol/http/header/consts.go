@@ -6,7 +6,7 @@ const (
 
 	Authorization = "Authorization"
 
-	CacheControl = "Cache-Control"
+	CacheControlKey = "Cache-Control"
 	Connection   = "Connection"
 	Cookie       = "Cookie"
 

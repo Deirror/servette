@@ -1,13 +1,15 @@
 package header
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 )
 
-func Set(h *http.Header, key string, val string) {
-	h.Set(key, val)
+func Set(w http.ResponseWriter, key string, val string) {
+	w.Header().Set(key, val)
 }
 
-func SetCacheControl(h *http.Header, val string) {
-	Set(h, CacheControlKey, val)
+func SetCacheControl(w http.ResponseWriter, privacy string, age int) {
+	Set(w, CacheControlKey, fmt.Sprintf("%s, max-age=%s", privacy, strconv.Itoa(age)))
 }

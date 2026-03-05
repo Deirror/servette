@@ -17,7 +17,7 @@ func NewMiddleware(r *languages.Resolver) *Middleware {
 	}
 }
 
-func (m *Middleware) LanguageMiddleware(next http.Handler) http.HandlerFunc {
+func (m *Middleware) LanguageMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		lang := m.rlv.FromRequest(r, languages.FromCookie)
 		ctx := context.WithValue(r.Context(), languages.LangKey, lang)

@@ -6,7 +6,7 @@ import (
 	"github.com/Deirror/servette/config"
 	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/env"
-	"github.com/Deirror/servette/protocol/http/server"
+	"github.com/Deirror/servette/transport/protocol/http/server"
 	"github.com/Deirror/servette/transport"
 )
 

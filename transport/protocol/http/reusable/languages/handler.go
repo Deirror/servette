@@ -7,7 +7,7 @@ import (
 	"github.com/Deirror/servette/auth/jwt"
 	"github.com/Deirror/servette/translation/languages"
 	"github.com/Deirror/servette/transport/err"
-	"github.com/Deirror/servette/protocol/http/handler"
+	"github.com/Deirror/servette/transport/protocol/http/handler"
 
 	"github.com/Deirror/servette/app"
 )

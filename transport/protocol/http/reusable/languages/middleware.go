@@ -1,25 +1,41 @@
 package languages
 
 import (
-	"net/http"
 	"context"
+	"net/http"
+
+	"github.com/Deirror/servette/app"
+	"github.com/Deirror/servette/auth/jwt"
 
 	"github.com/Deirror/servette/translation/languages"
+	"github.com/go-chi/chi/v5"
 )
 
 type Middleware struct {
 	rlv *languages.Resolver
+
+	jwt jwt.Provider
+
+	cfg *appx.Config
 }
 
-func NewMiddleware(r *languages.Resolver) *Middleware {
+func NewMiddleware(cfg *appx.Config, r *languages.Resolver, jwt jwt.Provider) *Middleware {
 	return &Middleware{
+		cfg: cfg,
 		rlv: r,
+		jwt: jwt,
 	}
 }
 
 func (m *Middleware) LanguageMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		lang := m.rlv.FromRequest(r, languages.FromCookie)
+		cookieLang := m.rlv.FromRequestCookie(r)
+		urlLang := chi.URLParam(r, languages.LangKey)
+		lang := cookieLang
+		if urlLang != cookieLang && m.rlv.IsSupported(urlLang) {
+			lang = urlLang
+			m.jwt.SetCookie(w, lang, appx.IsProdMode(m.cfg.Mode))
+		}
 		ctx := context.WithValue(r.Context(), languages.LangKey, lang)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

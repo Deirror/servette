@@ -13,8 +13,8 @@ import (
 	"github.com/Deirror/servette/transport"
 	"github.com/Deirror/servette/transport/dtos/resp"
 	"github.com/Deirror/servette/transport/err"
-	httpresp "github.com/Deirror/servette/transport/http/dtos/resp"
-	"github.com/Deirror/servette/transport/http/htmx"
+	httpresp "github.com/Deirror/servette/protocol/http/dtos/resp"
+	"github.com/Deirror/servette/protocol/http/htmx"
 )
 
 type Middleware struct {

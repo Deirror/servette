@@ -20,7 +20,14 @@ func NewTransporter(h *Handler, m *Middleware) *Transporter {
 
 func EmplaceTransporter(cfg *appx.Config, r *languages.Resolver, jwt *jwt.JWT) *Transporter {
 	h := NewHandler(cfg, r, jwt)
-	m := NewMiddleware(cfg, r, jwt)
+	m := NewMiddleware(r)
+
+	return NewTransporter(h, m)
+}
+
+func EmplaceWebTransporter(cfg *appx.Config, r *languages.Resolver, jwt *jwt.JWT) *Transporter {
+	h := NewHandler(cfg, r, jwt)
+	m := NewWebMiddleware(cfg, r, jwt)
 
 	return NewTransporter(h, m)
 }

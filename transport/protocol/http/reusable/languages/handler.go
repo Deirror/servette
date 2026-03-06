@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strings"
+	"net/url"
 
 	"github.com/Deirror/servette/auth/jwt"
 	"github.com/Deirror/servette/translation/languages"
@@ -29,41 +30,49 @@ func NewHandler(cfg *appx.Config, r *languages.Resolver, jwt jwt.Provider) *Hand
 }
 
 func (h *Handler) HandleSetLanguage(ctx context.Context, w http.ResponseWriter, r *http.Request) *errx.Err {
-	lang := h.rlv.FromRequestURL(r)
+    lang := h.rlv.FromRequestURL(r)
+    h.jwt.SetCookie(w, lang, appx.IsProdMode(h.cfg.Mode))
 
-	h.jwt.SetCookie(w, lang, appx.IsProdMode(h.cfg.Mode))
+    ref := r.Referer()
+    if ref == "" {
+        ref = "/" // fallback to root
+    }
 
-	path := r.Referer()
-	if path == "" {
-		path = "/"
-	}
+    u, err := url.Parse(ref)
+    if err != nil {
+        u = &url.URL{Path: "/"} 
+    }
 
-	url := "/" + lang + stripLangPrefix(path)
+    cleanPath := stripLangPrefix(u.Path)
 
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
-	return nil
+    finalURL := "/" + lang + cleanPath
+
+    if u.RawQuery != "" {
+        finalURL += "?" + u.RawQuery
+    }
+
+    http.Redirect(w, r, finalURL, http.StatusTemporaryRedirect)
+    return nil
 }
 
-// StripLangPrefix removes the leading /{lang} from a path if present.
-// e.g. "/en/news" -> "/news", "/fr/about" -> "/about"
-// if no lang prefix, returns path unchanged
+// stripLangPrefix removes leading /{lang} from a path (expects only path, no scheme/domain)
 func stripLangPrefix(path string) string {
-	if path == "" || path == "/" {
-		return path
-	}
+    if path == "" || path == "/" {
+        return "/"
+    }
 
-	parts := strings.SplitN(path, "/", 3) // ["", "en", "news"] or ["", "en"]
-	if len(parts) < 2 {
-		return path // no prefix
-	}
+    parts := strings.SplitN(path, "/", 3) // ["", "en", "news"] or ["", "en"]
+    if len(parts) < 2 {
+        return path
+    }
 
-	langCandidate := parts[1]
-	if len(langCandidate) == 2 { // simple heuristic: 2-letter lang code
-		if len(parts) == 2 {
-			return "/" // only /en -> return root
-		}
-		return "/" + parts[2] // remove lang
-	}
+    langCandidate := parts[1]
+    if len(langCandidate) == 2 { // simple heuristic
+        if len(parts) == 2 {
+            return "/" // only /en -> root
+        }
+        return "/" + parts[2] // remove lang
+    }
 
-	return path // not a lang prefix
+    return path
 }

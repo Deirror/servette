@@ -18,7 +18,7 @@ type Err struct {
 // New constructs a new Err with both client-facing key and internal message.
 func New(code, msgKey string, internalMsg ...string) *Err {
 	msg := ""
-	if len(internalMsg) > 1 {
+	if len(internalMsg) > 0 {
 		msg = internalMsg[0]
 	}
 

@@ -25,4 +25,5 @@ const (
 	Server          Key = "Server"
 	TextHTML        Key = "text/html"
 	ApplicationJSON Key = "application/json"
+	HXPushURL       Key = "HX-Push-Url"
 )

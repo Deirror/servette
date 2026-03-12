@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package env
 
 import (
@@ -9,12 +12,6 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-)
-
-const (
-	Dev     = "dev"
-	Prod    = "prod"
-	Staging = "staging"
 )
 
 // Loads environment variables from the given files.

@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package blob
 
 import (
@@ -10,7 +13,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/Deirror/servette/transport/http/client"
+	"github.com/Deirror/servette/transport/protocol/http/client"
 )
 
 type SupabaseStorageClient struct {
@@ -20,11 +23,11 @@ type SupabaseStorageClient struct {
 }
 
 func NewSupabaseStorageClient(cfg *Config) (*SupabaseStorageClient, error) {
-	defaultClientCfg := client.DefaultConfig()
+	defaultClientCfg := client.DefaultConfigx()
 	return &SupabaseStorageClient{
 		ProjectURL: cfg.ProjectURL,
 		APIKey:     cfg.APIKey,
-		Client:     client.New(&defaultClientCfg),
+		Client:     client.NewHTTPClient(defaultClientCfg),
 	}, nil
 }
 

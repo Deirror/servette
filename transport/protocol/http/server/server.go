@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package server
 
 import (
@@ -16,8 +19,8 @@ type Server struct {
 
 	srv       *http.Server
 	listener  net.Listener
-	transType string
-	endpoint string
+	transType transport.Type
+	endpoint  string
 }
 
 func New(cfg *Config, logger *slog.Logger, h http.Handler) (*Server, error) {
@@ -31,14 +34,14 @@ func New(cfg *Config, logger *slog.Logger, h http.Handler) (*Server, error) {
 		srv:       srv,
 		listener:  ln,
 		transType: cfg.TransType,
-		endpoint:      cfg.Endpoint,
+		endpoint:  cfg.Endpoint,
 	}, nil
 }
 
 func (s *Server) Start(ctx context.Context) error {
 	s.log.Info("HTTP Server starting",
-		slog.String("transport", s.transType),
-		slog.String("endpoint", s.endpoint),
+		slog.String(Transport, string(s.transType)),
+		slog.String(Endpoint, s.endpoint),
 	)
 
 	// Serve TLS if configured
@@ -55,7 +58,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	err := s.srv.Shutdown(ctx)
 
 	// Cleanup UNIX socket file
-	if s.transType == "unix" {
+	if s.transType.IsUDS() {
 		_ = os.Remove(s.endpoint)
 	}
 
@@ -66,7 +69,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 func NewHTTPServer(cfg *Config, handler http.Handler) (*http.Server, net.Listener, error) {
 	network := transport.NetworkFromTransType(cfg.TransType)
 
-	if network == "unix" {
+	if cfg.TransType.IsUDS() {
 		// Remove old socket file if exists
 		if _, err := os.Stat(cfg.Endpoint); err == nil {
 			if err := os.Remove(cfg.Endpoint); err != nil {
@@ -81,7 +84,7 @@ func NewHTTPServer(cfg *Config, handler http.Handler) (*http.Server, net.Listene
 		return nil, nil, err
 	}
 
-	if network == "unix" {
+	if cfg.TransType.IsUDS() {
 		if err := os.Chmod(cfg.Endpoint, 0660); err != nil {
 			listener.Close()
 			os.Remove(cfg.Endpoint)

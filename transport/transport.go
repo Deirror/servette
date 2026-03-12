@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package transport
 
 import (
@@ -12,31 +15,31 @@ func NewDialContext(network, addr string, dialTimeout time.Duration) DialContext
 	return func(ctx context.Context, _, _ string) (net.Conn, error) {
 		d := net.Dialer{
 			Timeout:   dialTimeout,
-			KeepAlive: 30 * time.Second, // default
+			KeepAlive: 30 * time.Second, // Default timeout
 		}
 		return d.DialContext(ctx, network, addr)
 	}
 }
 
-func NetworkFromTransType(t TransportType) string {
+func NetworkFromTransType(t Type) string {
 	switch t {
-	case TCPKey:
+	case TCP:
 		return "tcp"
-	case UDSKey:
+	case UDS:
 		return "unix"
 	default:
-		return "tcp" // default fallback
+		return "tcp" // Default fallback
 	}
 }
 
-func EndpointFromTransType(endpoint string, t TransportType) string {
+func EndpointFromTransType(endpoint string, t Type) string {
 	switch t {
-	case TCPKey:
+	case TCP:
 		return endpoint
-	case UDSKey:
+	case UDS:
 		return "http://unix"
 	default:
-		return endpoint // default fallback
+		return endpoint // Default fallback
 	}
 
 }

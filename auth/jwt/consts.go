@@ -1,8 +1,11 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package jwt
 
+type Key = string
+
 const (
-	Email = "email"
-	Lang  = "lang"
-	Exp   = "exp"
-	Alg   = "alg"
+	Exp Key = "exp"
+	Alg Key = "alg"
 )

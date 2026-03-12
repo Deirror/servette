@@ -1,12 +1,15 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package db
 
 import (
 	"time"
 
-	"github.com/Deirror/servette/env"
-	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/config"
+	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/domain/db"
+	"github.com/Deirror/servette/env"
 )
 
 type MultiConfig = config.MultiConfig[db.Config]

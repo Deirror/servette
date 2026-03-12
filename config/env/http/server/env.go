@@ -1,13 +1,14 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package server
 
 import (
-	"errors"
-
 	"github.com/Deirror/servette/config"
 	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/env"
-	"github.com/Deirror/servette/transport/protocol/http/server"
 	"github.com/Deirror/servette/transport"
+	"github.com/Deirror/servette/transport/protocol/http/server"
 )
 
 type MultiConfig = config.MultiConfig[server.Config]
@@ -27,12 +28,13 @@ var suffixes = []string{
 func LoadConfig(prefix ...string) (*server.Config, error) {
 	pfx := envcfg.ModPrefix(prefix...)
 
-	transType, err := env.Get(pfx + suffixes[0])
+	transTypeEnv, err := env.Get(pfx + suffixes[0])
 	if err != nil {
 		return nil, err
 	}
-	if !transport.IsValidType(transType) {
-		return nil, errors.New("transport type is unknown")
+	transType, err := transport.ParseType(transTypeEnv)
+	if err != nil {
+		return nil, err
 	}
 
 	endpoint, err := env.Get(pfx + suffixes[1])

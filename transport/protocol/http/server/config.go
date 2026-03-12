@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package server
 
 import (
@@ -10,7 +13,7 @@ import (
 // Config contains configuration settings for an HTTP server.
 type Config struct {
 	// Transport type: TCP or Unix
-	TransType transport.TransportType
+	TransType transport.Type
 
 	// Endpoint for TCP (host:port) or base URL for Unix ("http://unix"), but can be used also for socket filepaths
 	Endpoint string
@@ -29,7 +32,7 @@ type Config struct {
 
 func DefaultConfigx() *Config {
 	return &Config{
-		TransType:         transport.TCPKey,
+		TransType:         transport.TCP,
 		Endpoint:          "",
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      10 * time.Second,
@@ -60,7 +63,7 @@ func NewConfigWithTimeouts(endpoint string, readTimeout, writeTimeout, readHeade
 	return c
 }
 
-func (c *Config) WithTransType(t transport.TransportType) *Config {
+func (c *Config) WithTransType(t transport.Type) *Config {
 	c.TransType = t
 	return c
 }

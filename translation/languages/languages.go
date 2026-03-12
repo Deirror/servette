@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package languages
 
 import (
@@ -21,21 +24,8 @@ func NewResolver(defaultLang string, supported ...string) *Resolver {
 	}
 }
 
-func (rlv *Resolver) FromRequest(r *http.Request, t RequestType) string {
-	lang := rlv.DefaultLang
-
-	switch t {
-	case FromCookie:
-		lang = rlv.FromRequestCookie(r)
-	case FromURL:
-		lang = rlv.FromRequestURL(r)
-	}
-
-	return lang
-}
-
 func (rlv *Resolver) FromRequestURL(r *http.Request) string {
-	lang := r.URL.Query().Get(LangKey)
+	lang := r.URL.Query().Get(Lang)
 
 	if !rlv.IsSupported(lang) {
 		return rlv.DefaultLang
@@ -47,7 +37,7 @@ func (rlv *Resolver) FromRequestURL(r *http.Request) string {
 func (rlv *Resolver) FromRequestCookie(r *http.Request) string {
 	lang := rlv.DefaultLang
 
-	if cookie, err := r.Cookie(LangKey); err == nil {
+	if cookie, err := r.Cookie(Lang); err == nil {
 		if rlv.IsSupported(cookie.Value) {
 			lang = cookie.Value
 		}
@@ -57,7 +47,7 @@ func (rlv *Resolver) FromRequestCookie(r *http.Request) string {
 }
 
 func (r *Resolver) FromContext(ctx context.Context) string {
-	val := ctx.Value(LangKey)
+	val := ctx.Value(Lang)
 	if lang, ok := val.(string); ok && r.IsSupported(lang) {
 		return lang
 	}

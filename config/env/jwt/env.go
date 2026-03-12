@@ -1,9 +1,12 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package jwt
 
 import (
 	"github.com/Deirror/servette/auth/jwt"
-	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/config"
+	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/env"
 )
 

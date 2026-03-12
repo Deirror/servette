@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package logger
 
 import (
@@ -11,9 +14,9 @@ import (
 )
 
 // Inits the go standart logger, based on env mode.
-func New(mode string) *slog.Logger {
+func New(mode env.Mode) *slog.Logger {
 	var h slog.Handler
-	if mode == env.Dev {
+	if mode.IsDev() {
 		h = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})
 	} else {
 		h = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})
@@ -34,7 +37,7 @@ func LogFunc(
 	extraAttrs ...slog.Attr,
 ) {
 	attrs := []slog.Attr{
-		slog.Any(transport.ReqIDKey, ctx.Value(transport.ReqIDKey)),
+		slog.Any(transport.ReqID, ctx.Value(transport.ReqID)),
 		slog.Any(Error, err),
 	}
 	attrs = append(attrs, extraAttrs...)
@@ -59,8 +62,8 @@ func LogFuncWithTiming(
 	extraAttrs ...slog.Attr,
 ) {
 	attrs := []slog.Attr{
-		slog.Any(transport.ReqIDKey, ctx.Value(transport.ReqIDKey)),
-		slog.Duration(Took, time.Since(begin)),
+		slog.Any(transport.ReqID, ctx.Value(transport.ReqID)),
+		slog.Duration(Duration, time.Since(begin)),
 		slog.Any(Error, err),
 	}
 	attrs = append(attrs, extraAttrs...)

@@ -1,9 +1,14 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package json
 
 import (
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"github.com/Deirror/servette/transport/protocol/http/header"
 )
 
 // A wrapper for json data encoding.
@@ -14,7 +19,7 @@ func Encode(w io.Writer, v any) error {
 // A func that can be used in handlers to write JSON.
 // Includes status code and structured data to marshall.
 func Write(w http.ResponseWriter, s int, v any) error {
-	w.Header().Set(ContentType, ApplicationJSON)
+	w.Header().Set(header.ContentType, header.ApplicationJSON)
 	w.WriteHeader(s)
 	return Encode(w, v)
 }

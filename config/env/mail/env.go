@@ -1,12 +1,16 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package mail
 
 import (
+	"github.com/Deirror/servette/config"
 	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/domain/mail"
 	"github.com/Deirror/servette/env"
 )
 
-type MultiConfig = envcfg.MultiConfig[mail.Config]
+type MultiConfig = config.MultiConfig[mail.Config]
 
 var suffixes = []string{
 	"MAIL_HOST",
@@ -53,4 +57,3 @@ func LoadConfig(prefix ...string) (*mail.Config, error) {
 func LoadMultiConfig() (MultiConfig, error) {
 	return envcfg.LoadMultiConfig(suffixes, LoadConfig)
 }
-

@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package handler
 
 import (
@@ -6,8 +9,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/Deirror/servette/transport/err"
 	"github.com/Deirror/servette/transport"
+	errx "github.com/Deirror/servette/transport/err"
 )
 
 // A handler func which accepts context field and returns an error.
@@ -26,7 +29,7 @@ func Wrap(h Func, onErr ErrFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, transport.ReqIDKey, uuid.NewString())
+		ctx = context.WithValue(ctx, transport.ReqID, uuid.NewString())
 		if err := h(ctx, w, r); err != nil {
 			onErr(ctx, w, r, err)
 		}

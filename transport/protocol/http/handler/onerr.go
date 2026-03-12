@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package handler
 
 import (
@@ -7,13 +10,14 @@ import (
 	"strings"
 
 	"github.com/Deirror/servette/encoding/json"
-	"github.com/Deirror/servette/transport/err"
+	errx "github.com/Deirror/servette/transport/err"
+	"github.com/Deirror/servette/transport/protocol/http/header"
 )
 
-// Can be used in Wrap func as default one
+// Can be used in Wrap func as default one.
 func DefaultErrHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, err *errx.Err) {
-	accept := r.Header.Get("Accept")
-	if strings.Contains(accept, "text/html") {
+	accept := r.Header.Get(header.Accept)
+	if strings.Contains(accept, header.TextHTML) {
 		HTMLErrHandler(ctx, w, r, err)
 	} else {
 		JSONErrHandler(ctx, w, r, err)

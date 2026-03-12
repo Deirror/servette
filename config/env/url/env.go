@@ -1,12 +1,16 @@
-package url
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+package urlx
 
 import (
+	"github.com/Deirror/servette/config"
 	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/env"
-	"github.com/Deirror/servette/transport/url"
+	urlx "github.com/Deirror/servette/transport/url"
 )
 
-type MultiConfig = envcfg.MultiConfig[urlx.Config]
+type MultiConfig = config.MultiConfig[urlx.Config]
 
 // suffixes defines environment variable suffixes for URL Config.
 // EXTERNAL prefix is used to identify properly the envs, since URL is too generic.

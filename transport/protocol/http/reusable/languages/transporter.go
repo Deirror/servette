@@ -1,8 +1,11 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package languages
 
 import (
-	"github.com/Deirror/servette/app"
 	"github.com/Deirror/servette/auth/jwt"
+	"github.com/Deirror/servette/env"
 	"github.com/Deirror/servette/translation/languages"
 )
 
@@ -18,16 +21,16 @@ func NewTransporter(h *Handler, m *Middleware) *Transporter {
 	}
 }
 
-func EmplaceTransporter(cfg *appx.Config, r *languages.Resolver, jwt *jwt.JWT) *Transporter {
-	h := NewHandler(cfg, r, jwt)
+func EmplaceTransporter(mode env.Mode, r *languages.Resolver, jwt *jwt.JWT) *Transporter {
+	h := NewHandler(mode, r, jwt)
 	m := NewMiddleware(r)
 
 	return NewTransporter(h, m)
 }
 
-func EmplaceWebTransporter(cfg *appx.Config, r *languages.Resolver, jwt *jwt.JWT) *Transporter {
-	h := NewHandler(cfg, r, jwt)
-	m := NewWebMiddleware(cfg, r, jwt)
+func EmplaceWebTransporter(mode env.Mode, r *languages.Resolver, jwt *jwt.JWT) *Transporter {
+	h := NewHandler(mode, r, jwt)
+	m := NewWebMiddleware(mode, r, jwt)
 
 	return NewTransporter(h, m)
 }

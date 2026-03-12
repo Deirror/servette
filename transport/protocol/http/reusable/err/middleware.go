@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package errx
 
 import (
@@ -11,8 +14,8 @@ import (
 	"github.com/Deirror/servette/encoding/json"
 	"github.com/Deirror/servette/logger"
 	"github.com/Deirror/servette/transport"
-	"github.com/Deirror/servette/transport/dtos/resp"
-	"github.com/Deirror/servette/transport/err"
+	respx "github.com/Deirror/servette/transport/dtos/resp"
+	errx "github.com/Deirror/servette/transport/err"
 	httpresp "github.com/Deirror/servette/transport/protocol/http/dtos/resp"
 	"github.com/Deirror/servette/transport/protocol/http/htmx"
 )
@@ -36,13 +39,13 @@ func (m *Middleware) ErrMiddleware(ctx context.Context, w http.ResponseWriter, r
 		logger.LogFunc(ctx, m.log, r.URL.Path, errors.New(err.InternalMsg))
 	}
 
-	if err.MsgKey == transport.JSONFailKey || err.MsgKey == transport.HeadersWriteFailKey {
-		// headers are writter when writing json
+	if err.MsgKey == transport.JSONFail || err.MsgKey == transport.HeadersWriteFail {
+		// Headers are writter when writing json
 		return
 	}
 
-	if err.MsgKey == transport.TemplFailKey {
-		// render generic err indicator
+	if err.MsgKey == transport.TemplFail {
+		// Render generic err indicator
 		if htmx.IsHXRequest(r) {
 
 		} else {
@@ -52,7 +55,7 @@ func (m *Middleware) ErrMiddleware(ctx context.Context, w http.ResponseWriter, r
 
 	status, e := strconv.Atoi(err.Code)
 	if e != nil {
-		// generic bad status
+		// Generic bad status
 		status = http.StatusBadRequest
 	}
 
@@ -63,8 +66,12 @@ func (m *Middleware) ErrMiddleware(ctx context.Context, w http.ResponseWriter, r
 }
 
 func (m *Middleware) NotFoundMiddleware(w http.ResponseWriter, r *http.Request) {
-	resp := httpresp.New(http.StatusNotFound, transport.URLNotFoundKey, nil)
+	resp := httpresp.New(http.StatusNotFound, transport.URLNotFound, nil)
 	if err := json.Write(w, http.StatusNotFound, &resp); err != nil {
 		logger.LogFunc(context.Background(), m.log, "NotFoundMiddleware", fmt.Errorf("cannot write json: %v", err))
 	}
+}
+
+func (m *Middleware) NotFoundTemplMiddleware(w http.ResponseWriter, r *http.Request) {
+	// TODO: Impl
 }

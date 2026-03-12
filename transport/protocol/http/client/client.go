@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package client
 
 import (
@@ -10,6 +13,7 @@ import (
 
 	"github.com/Deirror/servette/encoding/json"
 	"github.com/Deirror/servette/transport"
+	"github.com/Deirror/servette/transport/protocol/http/header"
 )
 
 type Doer interface {
@@ -17,7 +21,7 @@ type Doer interface {
 }
 
 type Client struct {
-	cl Doer
+	cl       Doer
 	endpoint string
 }
 
@@ -29,7 +33,7 @@ func New(cfg *Config) *Client {
 	}
 }
 
-func (c *Client) DoRequest(method, path string, body io.Reader, opts ...RequestOption) (*http.Response, error) {
+func (c *Client) DoRequest(method, path string, body io.Reader, opts ...RequestOpt) (*http.Response, error) {
 	req, err := http.NewRequest(method, c.endpoint+path, body)
 	if err != nil {
 		return nil, err
@@ -43,34 +47,34 @@ func (c *Client) DoRequest(method, path string, body io.Reader, opts ...RequestO
 	return c.cl.Do(req)
 }
 
-func (c *Client) Get(path string, opts ...RequestOption) (*http.Response, error) {
+func (c *Client) Get(path string, opts ...RequestOpt) (*http.Response, error) {
 	return c.DoRequest(http.MethodGet, path, nil, opts...)
 }
 
-func (c *Client) Post(path string, body io.Reader, contentType string, opts ...RequestOption) (*http.Response, error) {
+func (c *Client) Post(path string, body io.Reader, contentType string, opts ...RequestOpt) (*http.Response, error) {
 	if contentType != "" {
-		opts = append(opts, WithHeader("Content-Type", contentType))
+		opts = append(opts, WithHeader(header.ContentType, contentType))
 	}
 	return c.DoRequest(http.MethodPost, path, body, opts...)
 }
 
-func (c *Client) PostJSON(path string, v any, opts ...RequestOption) (*http.Response, error) {
+func (c *Client) PostJSON(path string, v any, opts ...RequestOpt) (*http.Response, error) {
 	data, err := json.Marshal(v)
 	if err != nil {
 		return nil, err
 	}
-	opts = append(opts, WithHeader("Content-Type", "application/json"))
+	opts = append(opts, WithHeader(header.ContentType, header.ApplicationJSON))
 	return c.DoRequest(http.MethodPost, path, bytes.NewReader(data), opts...)
 }
 
-func (c *Client) Put(path string, body io.Reader, contentType string, opts ...RequestOption) (*http.Response, error) {
+func (c *Client) Put(path string, body io.Reader, contentType string, opts ...RequestOpt) (*http.Response, error) {
 	if contentType != "" {
-		opts = append(opts, WithHeader("Content-Type", contentType))
+		opts = append(opts, WithHeader(header.ContentType, contentType))
 	}
 	return c.DoRequest(http.MethodPut, path, body, opts...)
 }
 
-func (c *Client) Delete(path string, opts ...RequestOption) (*http.Response, error) {
+func (c *Client) Delete(path string, opts ...RequestOpt) (*http.Response, error) {
 	return c.DoRequest(http.MethodDelete, path, nil, opts...)
 }
 

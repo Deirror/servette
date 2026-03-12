@@ -1,9 +1,11 @@
 // Copyright 2026 Deirror. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
-package urlx
+package languages
 
-type Provider interface {
-	GetURL() string
-	WithQuery(arg, val string) string
-}
+type Key = string
+
+const (
+	Lang        Key    = "lang"
+	DefaultLang string = "en"
+)

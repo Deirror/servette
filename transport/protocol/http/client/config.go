@@ -1,3 +1,6 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package client
 
 import (
@@ -10,7 +13,7 @@ import (
 // Config contains configuration settings for an HTTP client.
 type Config struct {
 	// Transport type (tcp, unix, etc.)
-	TransType transport.TransportType
+	TransType transport.Type
 
 	// Endpoint (scheme + host or "http://unix" for unix socket) or spcket path, or just "where to connect"
 	Endpoint string
@@ -36,7 +39,7 @@ type Config struct {
 // DefaultCfg returns a production-friendly default configuration.
 func DefaultConfigx() *Config {
 	return &Config{
-		TransType:             transport.TCPKey,
+		TransType:             transport.TCP,
 		Endpoint:              "",
 		DialTimeout:           5 * time.Second,
 		RequestTimeout:        30 * time.Second,
@@ -70,13 +73,13 @@ func NewConfigWithTimeouts(endpoint string, dialTimeout, requestTimeout, respons
 	return c
 }
 
-func (c *Config) WithTransport(t transport.TransportType) *Config {
+func (c *Config) WithTransport(t transport.Type) *Config {
 	c.TransType = t
 	return c
 }
 
 func (c *Config) WithEndpoint(e string) *Config {
-	c.Endpoint = e 
+	c.Endpoint = e
 	return c
 }
 

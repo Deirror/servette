@@ -1,12 +1,16 @@
+// Copyright 2026 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package payment
 
 import (
+	"github.com/Deirror/servette/config"
 	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/domain/payment"
 	"github.com/Deirror/servette/env"
 )
 
-type MultiConfig = envcfg.MultiConfig[payment.Config]
+type MultiConfig = config.MultiConfig[payment.Config]
 
 var suffixes = []string{
 	"PAYMENT_API_KEY",

@@ -10,7 +10,7 @@ import (
 // Simple transport error struct, holding the most generic data for an error response.
 // Can be used for any type of transport - htpp, grpc, unix ...
 type Err struct {
-	Code        string `json:"status"`      // semantic error code (e.g. "user.not_found" or whatever)
+	Code        string `json:"code"`        // semantic error code (e.g. "user.not_found" or whatever)
 	MsgKey      string `json:"message_key"` // i18n key
 	InternalMsg string `json:"-"`           // logs only
 }

@@ -13,6 +13,7 @@ import (
 
 	"github.com/Deirror/servette/encoding/json"
 	"github.com/Deirror/servette/logger"
+	"github.com/Deirror/servette/toast"
 	"github.com/Deirror/servette/transport"
 	respx "github.com/Deirror/servette/transport/dtos/resp"
 	errx "github.com/Deirror/servette/transport/err"
@@ -51,7 +52,7 @@ func (m *Middleware) ErrMiddleware(ctx context.Context, w http.ResponseWriter, r
 
 	switch m.wt {
 	case JSON:
-		m.WriteErrJSON(ctx, w, err)
+		m.WriteErr(ctx, w, err)
 	case Templ:
 		m.RenderErr(ctx, w, r, err)
 	default:
@@ -59,7 +60,7 @@ func (m *Middleware) ErrMiddleware(ctx context.Context, w http.ResponseWriter, r
 	}
 }
 
-func (m *Middleware) WriteErrJSON(ctx context.Context, w http.ResponseWriter, err *errx.Err) {
+func (m *Middleware) WriteErr(ctx context.Context, w http.ResponseWriter, err *errx.Err) {
 	if err.MsgKey == transport.JSONFail || err.MsgKey == transport.HeadersWriteFail {
 		// Headers are writter when writing json
 		return
@@ -80,10 +81,11 @@ func (m *Middleware) WriteErrJSON(ctx context.Context, w http.ResponseWriter, er
 func (m *Middleware) RenderErr(ctx context.Context, w http.ResponseWriter, r *http.Request, err *errx.Err) {
 	if htmx.IsHXRequest(r) {
 		// Render toast
-
+		toast.Error(w, fmt.Sprintf("%v | %v", err.Code, err.MsgKey))
+		w.WriteHeader(http.StatusNoContent) // prevents swap
 	} else {
 		// Render full page
-
+		http.Redirect(w, r, fmt.Sprintf("/error?code=%v&msgkey%v", err.Code, err.MsgKey), http.StatusTemporaryRedirect)
 	}
 }
 
@@ -95,7 +97,7 @@ func (m *Middleware) NotFoundMiddleware(w http.ResponseWriter, r *http.Request) 
 			logger.LogFunc(context.Background(), m.log, "NotFoundMiddleware", fmt.Errorf("cannot write json: %v", err))
 		}
 	case Templ:
-		// TODO: Impl.
+		http.Redirect(w, r, fmt.Sprintf("/error?code=%v&msgkey%v", http.StatusNotFound, transport.URLNotFound), http.StatusTemporaryRedirect)
 	default:
 		return
 	}

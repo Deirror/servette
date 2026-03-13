@@ -37,7 +37,7 @@ func (h *Handler) HandleSetLanguage(ctx context.Context, w http.ResponseWriter, 
 
 	ref := r.Referer()
 	if ref == "" {
-		ref = "/" // Fallback to root
+		ref = "/" // fallback to root
 	}
 
 	u, err := url.Parse(ref)

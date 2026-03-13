@@ -20,13 +20,23 @@ import (
 	"github.com/Deirror/servette/transport/protocol/http/htmx"
 )
 
+type WriteType int
+
+const (
+	JSON  WriteType = iota
+	Templ WriteType = 1
+)
+
 type Middleware struct {
 	log *slog.Logger
+
+	wt WriteType
 }
 
-func NewMiddleware(log *slog.Logger) *Middleware {
+func NewMiddleware(log *slog.Logger, t WriteType) *Middleware {
 	return &Middleware{
 		log: log,
+		wt:  t,
 	}
 }
 
@@ -39,18 +49,20 @@ func (m *Middleware) ErrMiddleware(ctx context.Context, w http.ResponseWriter, r
 		logger.LogFunc(ctx, m.log, r.URL.Path, errors.New(err.InternalMsg))
 	}
 
+	switch m.wt {
+	case JSON:
+		m.WriteErrJSON(ctx, w, err)
+	case Templ:
+		m.RenderErr(ctx, w, r, err)
+	default:
+		return
+	}
+}
+
+func (m *Middleware) WriteErrJSON(ctx context.Context, w http.ResponseWriter, err *errx.Err) {
 	if err.MsgKey == transport.JSONFail || err.MsgKey == transport.HeadersWriteFail {
 		// Headers are writter when writing json
 		return
-	}
-
-	if err.MsgKey == transport.TemplFail {
-		// Render generic err indicator
-		if htmx.IsHXRequest(r) {
-
-		} else {
-
-		}
 	}
 
 	status, e := strconv.Atoi(err.Code)
@@ -65,13 +77,26 @@ func (m *Middleware) ErrMiddleware(ctx context.Context, w http.ResponseWriter, r
 	}
 }
 
-func (m *Middleware) NotFoundMiddleware(w http.ResponseWriter, r *http.Request) {
-	resp := httpresp.New(http.StatusNotFound, transport.URLNotFound, nil)
-	if err := json.Write(w, http.StatusNotFound, &resp); err != nil {
-		logger.LogFunc(context.Background(), m.log, "NotFoundMiddleware", fmt.Errorf("cannot write json: %v", err))
+func (m *Middleware) RenderErr(ctx context.Context, w http.ResponseWriter, r *http.Request, err *errx.Err) {
+	if htmx.IsHXRequest(r) {
+		// Render toast
+
+	} else {
+		// Render full page
+
 	}
 }
 
-func (m *Middleware) NotFoundTemplMiddleware(w http.ResponseWriter, r *http.Request) {
-	// TODO: Impl
+func (m *Middleware) NotFoundMiddleware(w http.ResponseWriter, r *http.Request) {
+	switch m.wt {
+	case JSON:
+		resp := httpresp.New(http.StatusNotFound, transport.URLNotFound, nil)
+		if err := json.Write(w, http.StatusNotFound, &resp); err != nil {
+			logger.LogFunc(context.Background(), m.log, "NotFoundMiddleware", fmt.Errorf("cannot write json: %v", err))
+		}
+	case Templ:
+		// TODO: Impl.
+	default:
+		return
+	}
 }

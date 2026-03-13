@@ -17,8 +17,8 @@ func NewTransporter(m *Middleware) *Transporter {
 	}
 }
 
-func EmplaceTransporter(log *slog.Logger) *Transporter {
-	m := NewMiddleware(log)
+func EmplaceTransporter(log *slog.Logger, t WriteType) *Transporter {
+	m := NewMiddleware(log, t)
 
 	return NewTransporter(m)
 }

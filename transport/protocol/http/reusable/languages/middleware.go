@@ -14,23 +14,27 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+type ResolveType int
+
+const (
+	Cookie            ResolveType = iota
+	URLParam          ResolveType = 1
+	CookieAndURLParam ResolveType = 2
+)
+
 type Middleware struct {
 	mode env.Mode
 
+	rt  ResolveType
 	rlv *languages.Resolver
 
 	jwt jwt.Provider
 }
 
-func NewMiddleware(r *languages.Resolver) *Middleware {
-	return &Middleware{
-		rlv: r,
-	}
-}
-
-func NewWebMiddleware(m env.Mode, r *languages.Resolver, jwt jwt.Provider) *Middleware {
+func NewMiddleware(m env.Mode, t ResolveType, r *languages.Resolver, jwt jwt.Provider) *Middleware {
 	return &Middleware{
 		mode: m,
+		rt:   t,
 		rlv:  r,
 		jwt:  jwt,
 	}
@@ -38,20 +42,22 @@ func NewWebMiddleware(m env.Mode, r *languages.Resolver, jwt jwt.Provider) *Midd
 
 func (m *Middleware) LanguageMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		lang := m.rlv.FromRequestCookie(r)
-		ctx := context.WithValue(r.Context(), languages.Lang, lang)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
-}
-
-func (m *Middleware) LanguageWebMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookieLang := m.rlv.FromRequestCookie(r)
-		urlLang := chi.URLParam(r, languages.Lang)
-		lang := cookieLang
-		if urlLang != cookieLang && m.rlv.IsSupported(urlLang) {
-			lang = urlLang
-			m.jwt.SetCookie(w, lang, m.mode.IsProd())
+		lang := ""
+		switch m.rt {
+		case Cookie:
+			lang = m.rlv.FromRequestCookie(r)
+		case URLParam:
+			lang = chi.URLParam(r, languages.Lang)
+		case CookieAndURLParam:
+			cookieLang := m.rlv.FromRequestCookie(r)
+			urlLang := chi.URLParam(r, languages.Lang)
+			lang = cookieLang
+			if urlLang != cookieLang && m.rlv.IsSupported(urlLang) {
+				lang = urlLang
+				m.jwt.SetCookie(w, lang, m.mode.IsProd())
+			}
+		default:
+			break
 		}
 		ctx := context.WithValue(r.Context(), languages.Lang, lang)
 		next.ServeHTTP(w, r.WithContext(ctx))

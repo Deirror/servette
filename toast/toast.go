@@ -22,7 +22,7 @@ func trigger(w http.ResponseWriter, msg string, t string) {
 
 	b, _ := json.Marshal(data)
 
-	w.Header().Set(header.HXTriggerAfterSwap, string(b))
+	w.Header().Set(header.HXTrigger, string(b))
 }
 
 func Success(w http.ResponseWriter, msg string) {

@@ -46,6 +46,9 @@ func (h *Handler) HandleSetLanguage(ctx context.Context, w http.ResponseWriter, 
 	}
 
 	cleanPath := stripLangPrefix(u.Path)
+	if cleanPath == "/" {
+		cleanPath = ""
+	}
 
 	finalURL := "/" + lang + cleanPath
 

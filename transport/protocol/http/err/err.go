@@ -18,3 +18,12 @@ func New(status int, key, errMsg string, srvErr error) *errx.Err {
 
 	return errx.New(strconv.Itoa(status), key, srvErrMsg)
 }
+
+func NewWithMsg(status int, msgKey, msg, errMsg string, srvErr error) *errx.Err {
+	srvErrMsg := errMsg
+	if srvErr != nil {
+		srvErrMsg = fmt.Sprintf("%s: %v", errMsg, srvErr)
+	}
+
+	return errx.NewWithMsg(strconv.Itoa(status), msgKey, msg, srvErrMsg)
+}

@@ -81,7 +81,7 @@ func (m *Middleware) WriteErr(ctx context.Context, w http.ResponseWriter, err *e
 func (m *Middleware) RenderErr(ctx context.Context, w http.ResponseWriter, r *http.Request, err *errx.Err) {
 	if htmx.IsHXRequest(r) {
 		// Render toast
-		toast.Error(w, fmt.Sprintf("%v | %v", err.Code, err.MsgKey))
+		toast.Error(w, fmt.Sprintf("%v | %v", err.Code, err.Error()))
 		w.WriteHeader(http.StatusNoContent) // prevents swap
 	} else {
 		// Render full page

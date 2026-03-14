@@ -10,9 +10,10 @@ import (
 // Simple transport error struct, holding the most generic data for an error response.
 // Can be used for any type of transport - htpp, grpc, unix ...
 type Err struct {
-	Code        string `json:"code"`        // semantic error code (e.g. "user.not_found" or whatever)
-	MsgKey      string `json:"message_key"` // i18n key
-	InternalMsg string `json:"-"`           // logs only
+	Code        string `json:"code"`              // semantic error code
+	MsgKey      string `json:"message_key"`       // i18n key
+	Msg         string `json:"message,omitempty"` // resolved message (optional)
+	InternalMsg string `json:"-"`                 // logs only
 }
 
 // New constructs a new Err with both client-facing key and internal message.
@@ -29,8 +30,26 @@ func New(code, msgKey string, internalMsg ...string) *Err {
 	}
 }
 
-// Error implements the error interface and returns the MsgKey.
+// New constructs a new Err with both client-facing key and resolved message, and internal message.
+func NewWithMsg(code, msgKey, msg string, internalMsg ...string) *Err {
+	iMsg := ""
+	if len(internalMsg) > 0 {
+		iMsg = internalMsg[0]
+	}
+
+	return &Err{
+		Code:        code,
+		MsgKey:      msgKey,
+		Msg:         msg,
+		InternalMsg: iMsg,
+	}
+}
+
+// Error implements the error interface and returns the MsgKey or resolved Msg.
 func (e *Err) Error() string {
+	if e.Msg != "" {
+		return e.Msg
+	}
 	return e.MsgKey
 }
 

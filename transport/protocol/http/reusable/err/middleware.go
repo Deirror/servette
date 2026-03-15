@@ -105,7 +105,14 @@ func (m *Middleware) NotFoundMiddleware(w http.ResponseWriter, r *http.Request) 
 			logger.LogFunc(context.Background(), m.log, "NotFoundMiddleware", fmt.Errorf("cannot write json: %v", err))
 		}
 	case Templ:
-		http.Redirect(w, r, fmt.Sprintf("/error?code=%v&msgkey%v", http.StatusNotFound, transport.URLNotFound), http.StatusTemporaryRedirect)
+		http.Redirect(w, r,
+			fmt.Sprintf(
+				"/error?code=%d&msgkey=%s",
+				http.StatusNotFound,
+				transport.URLNotFound,
+			),
+			http.StatusTemporaryRedirect,
+		)
 	default:
 		return
 	}

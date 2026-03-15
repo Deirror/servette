@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/Deirror/servette/encoding/json"
@@ -85,7 +86,14 @@ func (m *Middleware) RenderErr(ctx context.Context, w http.ResponseWriter, r *ht
 		w.WriteHeader(http.StatusNoContent) // prevents swap
 	} else {
 		// Render full page
-		http.Redirect(w, r, fmt.Sprintf("/error?code=%v&msgkey%v", err.Code, err.MsgKey), http.StatusTemporaryRedirect)
+		http.Redirect(w, r,
+			fmt.Sprintf(
+				"/error?code=%s&msgkey=%s",
+				url.QueryEscape(err.Code),
+				url.QueryEscape(err.MsgKey),
+			),
+			http.StatusTemporaryRedirect,
+		)
 	}
 }
 

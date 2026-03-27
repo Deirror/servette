@@ -12,6 +12,7 @@ import (
 	"github.com/Deirror/servette/encoding/json"
 )
 
+// Bundle consists of key-value pairs of a language and translations.
 type Bundle struct {
 	langs map[string]map[string]string
 }
@@ -22,6 +23,7 @@ func NewBundle() *Bundle {
 	}
 }
 
+// LoadBundle loads all .json files.
 func LoadBundle(dir string) (*Bundle, error) {
 	b := NewBundle()
 

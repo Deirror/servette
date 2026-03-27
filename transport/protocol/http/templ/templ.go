@@ -1,3 +1,6 @@
+// Copyright 2025 Deirror. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
 package templ
 
 import (
@@ -7,10 +10,10 @@ import (
 
 	"github.com/a-h/templ"
 
-	"github.com/Deirror/servette/transport/protocol/http/header"
 	"github.com/Deirror/servette/transport"
-	"github.com/Deirror/servette/transport/err"
+	errx "github.com/Deirror/servette/transport/err"
 	httperr "github.com/Deirror/servette/transport/protocol/http/err"
+	"github.com/Deirror/servette/transport/protocol/http/header"
 )
 
 func Render(ctx context.Context, c templ.Component, w http.ResponseWriter) *errx.Err {

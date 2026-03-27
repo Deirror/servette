@@ -1,4 +1,4 @@
-// Copyright 2026 Deirror. All rights reserved.
+// Copyright 2025 Deirror. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 package htmx
@@ -7,7 +7,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Deirror/servette/transport/err"
+	errx "github.com/Deirror/servette/transport/err"
 	"github.com/Deirror/servette/transport/protocol/http/handler"
 	"github.com/Deirror/servette/transport/protocol/http/htmx"
 )

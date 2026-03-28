@@ -20,11 +20,15 @@ func New(b *Bundle, r *languages.Resolver) *Translator {
 	}
 }
 
-func Emplace(bundlePath, defaultLang string, supportedLangs ...string) (*Translator, error) {
+func Emplace(bundlePaths []string, defaultLang string, supportedLangs ...string) (*Translator, error) {
 	rlv := languages.NewResolver(defaultLang, supportedLangs...)
-	bundle, err := LoadBundle(bundlePath)
-	if err != nil {
-		return nil, err
+	bundle := NewBundle()
+	for _, p := range bundlePaths {
+		b, err := LoadBundle(p)
+		if err != nil {
+			return nil, err
+		}
+		bundle.Merge(b)
 	}
 	return New(bundle, rlv), nil
 }

@@ -5,6 +5,7 @@ package translation
 
 import (
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
@@ -82,5 +83,14 @@ func flatten(prefix string, in map[string]any, out map[string]string) {
 func (b *Bundle) ForLang(lang string) *I18n {
 	return &I18n{
 		data: b.langs[lang],
+	}
+}
+
+func (b *Bundle) Merge(o *Bundle) {
+	for lang, mp := range o.langs {
+		if b.langs[lang] == nil {
+			b.langs[lang] = make(map[string]string, len(mp))
+		}
+		maps.Copy(b.langs[lang], mp)
 	}
 }

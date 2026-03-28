@@ -19,7 +19,12 @@ var suffixes = []string{"APP_MODE", "APP_DOMAIN"}
 func LoadConfig(prefix ...string) (*appx.Config, error) {
 	pfx := envcfg.ModPrefix(prefix...)
 
-	mode, err := env.Get(pfx + suffixes[0])
+	modeEnv, err := env.Get(pfx + suffixes[0])
+	if err != nil {
+		return nil, err
+	}
+
+	mode, err := env.ParseMode(modeEnv)
 	if err != nil {
 		return nil, err
 	}

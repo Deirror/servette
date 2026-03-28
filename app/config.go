@@ -3,27 +3,31 @@
 // license that can be found in the LICENSE file.
 package app
 
+import (
+	"github.com/Deirror/servette/env"
+)
+
 // Config holds basic environment configuration like mode and domain.
 type Config struct {
-	Mode   string // Application mode: development, staging, production
-	Domain string // Public-facing domain, e.g., example.com
+	Mode   env.Mode // Application mode: development, staging, production
+	Domain string   // Public-facing domain, e.g., example.com
 }
 
-func NewConfig(mode, domain string) *Config {
+func NewConfig(m env.Mode, d string) *Config {
 	return &Config{
-		Mode:   mode,
-		Domain: domain,
+		Mode:   m,
+		Domain: d,
 	}
 }
 
 // WithMode sets the mode and returns the updated Config.
-func (c *Config) WithMode(mode string) *Config {
-	c.Mode = mode
+func (c *Config) WithMode(m env.Mode) *Config {
+	c.Mode = m
 	return c
 }
 
 // WithDomain sets the domain and returns the updated Config.
-func (c *Config) WithDomain(domain string) *Config {
-	c.Domain = domain
+func (c *Config) WithDomain(d string) *Config {
+	c.Domain = d
 	return c
 }

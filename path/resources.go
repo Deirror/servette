@@ -17,6 +17,18 @@ const (
 	Unknown  ResourceKind = "unknown"  // invalid resource
 )
 
+func (r ResourceKind) IsFilePath() bool {
+	return r == FilePath
+}
+
+func (r ResourceKind) IsURI() bool {
+	return r == URI
+}
+
+func (r ResourceKind) IsUnknown() bool {
+	return r == Unknown
+}
+
 // ParseResourceKind converts a string to a ResourceKind. Case-insensitive.
 func ParseResourceKind(s string) (ResourceKind, error) {
 	normalized := strings.ToLower(strings.TrimSpace(s))

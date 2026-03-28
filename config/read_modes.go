@@ -30,3 +30,15 @@ func ParseReadMode(s string) (ReadMode, error) {
         return "", fmt.Errorf("invalid ReadMode: %q", s)
     }
 }
+
+func (r ReadMode) IsFile() bool {
+	return r == File
+}
+
+func (r ReadMode) IsOS() bool {
+	return r == OS
+}
+
+func (r ReadMode) IsExternal() bool {
+	return r == External
+}

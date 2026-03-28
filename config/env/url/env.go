@@ -13,9 +13,9 @@ import (
 type MultiConfig = config.MultiConfig[urlx.Config]
 
 // suffixes defines environment variable suffixes for URL Config.
-// EXTERNAL prefix is used to identify properly the envs, since URL is too generic.
+// BASE prefix is used to identify properly the envs, since URL is too generic.
 var suffixes = []string{
-	"EXTERNAL_URL",
+	"BASE_URL",
 }
 
 // LoadConfig loads URL Config from environment variables.

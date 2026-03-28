@@ -7,24 +7,24 @@ import (
 	"net/url"
 )
 
-type ExternalURLClient struct {
-	eURL string
+type URLClient struct {
+	URL string
 }
 
-func NewExternalURLClient(cfg *Config) *ExternalURLClient {
-	return &ExternalURLClient{
-		eURL: cfg.URL,
+func NewURLClient(cfg *Config) *URLClient {
+	return &URLClient{
+		URL: cfg.URL,
 	}
 }
 
-func (c *ExternalURLClient) GetURL() string {
-	return c.eURL
+func (c *URLClient) GetURL() string {
+	return c.URL
 }
 
-func (c *ExternalURLClient) WithQuery(arg, val string) string {
-	u, err := url.Parse(c.eURL)
+func (c *URLClient) WithQuery(arg, val string) string {
+	u, err := url.Parse(c.URL)
 	if err != nil {
-		return c.eURL
+		return c.URL
 	}
 
 	q := u.Query()

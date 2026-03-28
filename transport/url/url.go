@@ -5,5 +5,7 @@ package urlx
 
 type Provider interface {
 	GetURL() string
-	WithQuery(arg, val string) string
+	WithQuery(arg, val string) Provider
+	WithPath(path string) Provider
 }
+

@@ -37,19 +37,10 @@ func LoadConfig(prefix ...string) (*config.Config, error) {
 
 	readResources := str.SplitAndTrim(readResourcesEnv)
 
-	return config.NewConfig(readMode, StringsToResources(readResources)), nil
+	return config.NewConfig(readMode, pathx.StringsToResources(readResources)), nil
 }
 
 // LoadMultiConfig scans env vars and builds app configs based on their prefix.
 func LoadMultiConfig() (MultiConfig, error) {
 	return envcfg.LoadMultiConfig(suffixes, LoadConfig)
-}
-
-// StringsToResources converts a slice of strings into []Resource
-func StringsToResources(strs []string) []pathx.Resource {
-	res := make([]pathx.Resource, len(strs))
-	for i, s := range strs {
-		res[i] = pathx.Resource(s)
-	}
-	return res
 }

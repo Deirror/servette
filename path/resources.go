@@ -58,3 +58,26 @@ func (p Resource) Kind() ResourceKind {
 
 	return FilePath
 }
+
+// ResourcesToStrings converts a slice of Resource to a slice of strings.
+// Trims whitespace and ignores empty strings.
+func ResourcesToStrings(resources []Resource) []string {
+	result := make([]string, 0, len(resources))
+	for _, r := range resources {
+		s := strings.TrimSpace(string(r))
+		if s != "" {
+			result = append(result, s)
+		}
+	}
+	return result
+}
+
+
+// StringsToResources converts a slice of strings into []Resource
+func StringsToResources(strs []string) []Resource {
+	res := make([]Resource, len(strs))
+	for i, s := range strs {
+		res[i] = Resource(s)
+	}
+	return res
+}

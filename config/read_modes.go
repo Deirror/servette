@@ -13,7 +13,7 @@ type ReadMode string
 const (
     File     ReadMode = "file"     // Read from a local file (.env, YAML, etc.)
     OS       ReadMode = "os"       // Read from inherited OS environment variables
-    External ReadMode = "external" // Read from external source (Docker secrets, K8s secrets, etc.)
+    Ext ReadMode = "ext" // Read from external source (Docker secrets, K8s secrets, etc.)
 )
 
 // ParseReadMode converts a string to a ReadMode. Case-insensitive.
@@ -24,8 +24,8 @@ func ParseReadMode(s string) (ReadMode, error) {
         return File, nil
     case string(OS):
         return OS, nil
-    case string(External):
-        return External, nil
+    case string(Ext):
+        return Ext, nil
     default:
         return "", fmt.Errorf("invalid ReadMode: %q", s)
     }
@@ -39,6 +39,6 @@ func (r ReadMode) IsOS() bool {
 	return r == OS
 }
 
-func (r ReadMode) IsExternal() bool {
-	return r == External
+func (r ReadMode) IsExt() bool {
+	return r == Ext
 }

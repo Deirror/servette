@@ -23,7 +23,8 @@ func GetProjectRootFromAppMode(appPrefix string) (string, error) {
 			return "", err
 		}
 	}
-	// Fallback to searching for go.mod.
+
+	// Fallback to searching for go.mod
 	root, err := FindProjectRoot("go.mod")
 	if err != nil {
 		return "", err

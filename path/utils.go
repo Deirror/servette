@@ -4,7 +4,6 @@
 package pathx
 
 import (
-	"net/url"
 	"strings"
 )
 
@@ -29,22 +28,6 @@ func Join(parts ...string) string {
 	return b.String()
 }
 
-// JoinQuery constructs a raw query string from key=value parts, including the '?' prefix.
-func JoinQuery(parts ...string) string {
-	values := url.Values{}
-
-	for _, part := range parts {
-		if kv := strings.SplitN(part, "=", 2); len(kv) == 2 {
-			values.Add(kv[0], kv[1])
-		}
-	}
-
-	enc := values.Encode()
-	if enc == "" {
-		return ""
-	}
-	return "?" + enc
-}
 
 // Prefix constructs a path by prepending a prefix segment and joining
 // additional path segments.
@@ -64,6 +47,4 @@ func Prefix(prefix string, parts ...string) string {
 	for _, p := range parts {
 		b.WriteString(p)
 	}
-
-	return b.String()
 }

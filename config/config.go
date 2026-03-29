@@ -4,7 +4,7 @@
 package config
 
 import (
-	"github.com/Deirror/servette/path"
+	"github.com/Deirror/servette/resource"
 )
 
 // Config represents the configuration for the application.
@@ -14,10 +14,10 @@ import (
 // or a remote URI).
 type Config struct {
 	ReadMode                   // Determines the mode in which configuration is read
-	Resources []pathx.Resource // The resources representing the config source
+	Resources []resource.Resource // The resources representing the config source
 }
 
-func NewConfig(m ReadMode, rs []pathx.Resource) *Config {
+func NewConfig(m ReadMode, rs []resource.Resource) *Config {
 	return &Config{
 		ReadMode:  m,
 		Resources: rs,
@@ -31,7 +31,7 @@ func (c *Config) WithReadMode(m ReadMode) *Config {
 }
 
 // WithResource returns a copy of the Config with a new Resource.
-func (c *Config) WithResource(rs []pathx.Resource) *Config {
+func (c *Config) WithResource(rs []resource.Resource) *Config {
 	c.Resources = rs
 	return c
 }

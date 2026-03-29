@@ -8,7 +8,7 @@ import (
 	envcfg "github.com/Deirror/servette/config/env"
 	"github.com/Deirror/servette/env"
 	"github.com/Deirror/servette/internal/utils/str"
-	"github.com/Deirror/servette/path"
+	"github.com/Deirror/servette/resource"
 )
 
 type MultiConfig = config.MultiConfig[config.Config]
@@ -37,7 +37,7 @@ func LoadConfig(prefix ...string) (*config.Config, error) {
 
 	readResources := str.SplitAndTrim(readResourcesEnv)
 
-	return config.NewConfig(readMode, pathx.StringsToResources(readResources)), nil
+	return config.NewConfig(readMode, resource.StringsToResources(readResources)), nil
 }
 
 // LoadMultiConfig scans env vars and builds app configs based on their prefix.

@@ -6,11 +6,11 @@ package initx
 import (
 	"fmt"
 
-	"github.com/Deirror/servette/path"
+	"github.com/Deirror/servette/resource"
 )
 
-func (c *Config) Subresources(keys ...string) ([]pathx.Resource, error) {
-	var subrs []pathx.Resource
+func (c *Config) Subresources(keys ...string) ([]resource.Resource, error) {
+	var subrs []resource.Resource
 	for _, k := range keys {
 		if cfg, ok := c.Cfgs[k]; ok {
 			subrs = append(subrs, cfg.Resources...)
@@ -26,5 +26,5 @@ func (c *Config) Substrings(keys ...string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	return pathx.ResourcesToStrings(subrs), nil
+	return resource.ResourcesToStrings(subrs), nil
 }

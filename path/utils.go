@@ -47,4 +47,6 @@ func Prefix(prefix string, parts ...string) string {
 	for _, p := range parts {
 		b.WriteString(p)
 	}
+
+	return b.String()
 }
